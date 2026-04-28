@@ -2,6 +2,7 @@ package dev.jorge.projects.auth.handler;
 
 import dev.jorge.projects.auth.common.dto.response.ExceptionResponse;
 import dev.jorge.projects.auth.user.exception.UserAlreadyExistsException;
+import dev.jorge.projects.auth.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,10 +22,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({UserAlreadyExistsException.class})
-    public final ResponseEntity<ExceptionResponse> handlerConflictException(
-            Exception ex,
-            WebRequest webRequest
-    ) {
+    public final ResponseEntity<ExceptionResponse> handlerConflictException(Exception ex, WebRequest webRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 ex.getMessage(),
                 webRequest.getDescription(false),
@@ -33,11 +31,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler({UserNotFoundException.class})
+    public final ResponseEntity<ExceptionResponse> handlerUserNotFoundException(Exception ex, WebRequest webRequest) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                ex.getMessage(),
+                webRequest.getDescription(false),
+                new Date()
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler({BadCredentialsException.class})
-    public final ResponseEntity<ExceptionResponse> handlerBadCredentialsException(
-            BadCredentialsException ex,
-            WebRequest webRequest
-    ) {
+    public final ResponseEntity<ExceptionResponse> handlerBadCredentialsException(BadCredentialsException ex, WebRequest webRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 ex.getMessage(),
                 webRequest.getDescription(false),
@@ -47,10 +52,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public final ResponseEntity<?> handlerMethodArgumentNotValidException(
-            MethodArgumentNotValidException ex,
-            WebRequest webRequest
-    ) {
+    public final ResponseEntity<?> handlerMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
 
         List<Map<String, String>> errors = ex.getBindingResult()
                 .getFieldErrors()
