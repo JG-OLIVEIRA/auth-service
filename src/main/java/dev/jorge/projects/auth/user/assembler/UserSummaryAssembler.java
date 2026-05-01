@@ -1,7 +1,7 @@
 package dev.jorge.projects.auth.user.assembler;
 
 import dev.jorge.projects.auth.user.controller.UserController;
-import dev.jorge.projects.auth.user.dto.response.GetAllUserResponse;
+import dev.jorge.projects.auth.user.dto.response.GetUserResponse;
 import dev.jorge.projects.auth.user.entity.User;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;
@@ -12,8 +12,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class UserSummaryAssembler {
 
-    public EntityModel<GetAllUserResponse> toModel(User user) {
-        GetAllUserResponse dto = new GetAllUserResponse(
+    public EntityModel<GetUserResponse> toModel(User user) {
+        GetUserResponse dto = new GetUserResponse(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),

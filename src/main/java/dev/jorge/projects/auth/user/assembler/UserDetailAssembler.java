@@ -1,9 +1,8 @@
 package dev.jorge.projects.auth.user.assembler;
 
 import dev.jorge.projects.auth.user.controller.UserController;
-import dev.jorge.projects.auth.user.dto.response.GetOneUserResponse;
+import dev.jorge.projects.auth.user.dto.response.GetUserResponse;
 import dev.jorge.projects.auth.user.entity.User;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +12,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class UserDetailAssembler {
 
-    public EntityModel<GetOneUserResponse> toModel(User user) {
-        GetOneUserResponse dto = new GetOneUserResponse(
+    public EntityModel<GetUserResponse> toModel(User user) {
+        GetUserResponse dto = new GetUserResponse(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -30,7 +29,7 @@ public class UserDetailAssembler {
                         .withSelfRel(),
 
                 linkTo(methodOn(UserController.class)
-                        .getAllUsers(Pageable.unpaged()))
+                        .getAllUsers(0, 10))
                         .withRel("users"));
     }
 }

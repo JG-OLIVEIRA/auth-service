@@ -5,7 +5,7 @@ import dev.jorge.projects.auth.security.dto.request.LoginRequest;
 import dev.jorge.projects.auth.user.dto.request.CreateUserRequest;
 import dev.jorge.projects.auth.security.dto.response.LoginResponse;
 import dev.jorge.projects.auth.user.dto.response.CreateUserResponse;
-import dev.jorge.projects.auth.user.dto.response.UserProfileResponse;
+import dev.jorge.projects.auth.user.dto.response.GetUserResponse;
 import dev.jorge.projects.auth.user.entity.User;
 import dev.jorge.projects.auth.security.service.AuthService;
 import jakarta.validation.Valid;
@@ -41,8 +41,8 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileResponse> getCurrentUser(@AuthenticationPrincipal JWTUserData tokenData) {
+    public ResponseEntity<GetUserResponse> getCurrentUser(@AuthenticationPrincipal JWTUserData tokenData) {
         User user = authService.findUserByEmail(tokenData.email());
-        return ResponseEntity.ok(UserProfileResponse.fromEntity(user));
+        return ResponseEntity.ok(GetUserResponse.fromEntity(user));
     }
 }
