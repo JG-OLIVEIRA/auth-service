@@ -12,6 +12,28 @@ O serviço é responsável por:
 
 ---
 
+## 🚀 Como rodar
+
+Usando docker:
+```bash
+docker-compose up -d
+```
+
+Usando mvn: 
+```bash
+mvn spring-boot:run
+```
+
+## 📡 Endpoints principais
+
+| Método | Rota              | Descrição         |
+|--------|-------------------|-------------------|
+| POST   | /auth/register    | Cadastro          |
+| POST   | /auth/login       | Login com JWT     |
+| GET    | /users            | Lista (ADMIN)     |
+
+---
+
 ## ✨ Features
 
 - ✅ Registro de usuários
