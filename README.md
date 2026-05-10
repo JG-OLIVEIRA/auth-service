@@ -14,6 +14,11 @@ O serviço é responsável por:
 
 ## 🚀 Como rodar
 
+Clone o projeto:
+```bash
+git clone https://github.com/JG-OLIVEIRA/auth-service.git
+```
+
 Usando docker:
 ```bash
 docker-compose up -d
