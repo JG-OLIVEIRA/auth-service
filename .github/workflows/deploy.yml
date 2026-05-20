@@ -1,0 +1,55 @@
+name: Pipeline CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  job1:
+    name: build_ecr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: "Configure AWS Credentials"
+        uses: aws-actions/configure-aws-credentials@v4.3.1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRepoApp
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Amazon ECR "Login" Action for GitHub Actions
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+
+      - name: Build, Tag, and Push image to Amazon ECR
+        run: |
+          docker build -t auth-service:latest .
+          docker tag auth-service:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/auth-service:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/auth-service:latest
+
+  job2:
+    name: deploy_ec2
+    needs: job1
+    env:
+      INSTANCE_KEY: ${{ secrets.INSTANCE_KEY }}
+      PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy EC2 SSH
+        run: |
+          echo "$INSTANCE_KEY" > chave-auth-service.pem
+          chmod 400 chave-auth-service.pem
+          ssh -i chave-auth-service.pem -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP << EOF
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/auth-service:latest
+            docker stop auth-service || true
+            docker rm auth-service || true
+            docker run -d -p 80:8080 --name auth-service -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/auth-service:latest
+            docker ps
+          EOF
+          rm chave-auth-service.pem
