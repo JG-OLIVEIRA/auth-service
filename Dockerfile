@@ -12,5 +12,5 @@ FROM amazoncorretto:21
 WORKDIR /app
 COPY --from=builder /app/target/auth-service-1.0.0-SNAPSHOT.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

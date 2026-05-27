@@ -1,6 +1,6 @@
 package dev.jorge.projects.auth.user.factory;
 
-import dev.jorge.projects.auth.user.entity.User;
+import dev.jorge.projects.auth.user.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

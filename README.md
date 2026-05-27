@@ -114,7 +114,7 @@ O projeto segue o padrão arquitetural **Package-by-Feature**, tornando a manute
 ```bash
 src/main/java
 ├── common
-├── handler
+├── handlers
 ├── security
 └── user
 ```

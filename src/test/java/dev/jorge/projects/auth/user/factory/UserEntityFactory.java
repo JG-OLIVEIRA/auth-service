@@ -1,6 +1,6 @@
 package dev.jorge.projects.auth.user.factory;
 
-import dev.jorge.projects.auth.user.entity.User;
+import dev.jorge.projects.auth.user.entities.User;
 
 import java.util.UUID;
 

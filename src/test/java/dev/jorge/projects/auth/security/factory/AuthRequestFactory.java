@@ -1,7 +1,7 @@
 package dev.jorge.projects.auth.security.factory;
 
-import dev.jorge.projects.auth.security.dto.request.LoginRequest;
-import dev.jorge.projects.auth.security.dto.request.RegisterUserRequest;
+import dev.jorge.projects.auth.security.dtos.requests.LoginRequest;
+import dev.jorge.projects.auth.security.dtos.requests.RegisterUserRequest;
 
 public class AuthRequestFactory {
 
