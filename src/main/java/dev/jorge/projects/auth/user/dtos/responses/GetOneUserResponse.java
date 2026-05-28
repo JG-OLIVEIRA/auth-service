@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public record GetOneUserResponse(
-        UUID id,
+        UUID userId,
         String firstName,
         String lastName,
         String username,
@@ -20,7 +20,7 @@ public record GetOneUserResponse(
 {
     public static GetOneUserResponse fromEntity(User user) {
         return new GetOneUserResponse(
-                user.getId(),
+                user.getUserId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getUsername(),

@@ -22,7 +22,7 @@ public class TokenConfig {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()
-                .withClaim("userId", user.getId().toString())
+                .withClaim("userId", user.getUserId().toString())
                 .withClaim("roles", user.getRoles().stream().map(Enum::name).toList())
                 .withSubject(user.getEmail())
                 .withExpiresAt(Instant.now().plus(Duration.ofDays(7)))

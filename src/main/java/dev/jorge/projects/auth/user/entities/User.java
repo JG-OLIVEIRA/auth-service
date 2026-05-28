@@ -24,7 +24,7 @@ import java.util.UUID;
 public class User implements UserDetails {
 
     @Id
-    private UUID id;
+    private UUID userId;
 
     @Column(nullable = false)
     private String firstName;
@@ -63,8 +63,8 @@ public class User implements UserDetails {
 
     @PrePersist
     public void prePersist() {
-        if (this.id == null) {
-            this.id = UuidCreator.getTimeOrderedEpoch();
+        if (this.userId == null) {
+            this.userId = UuidCreator.getTimeOrderedEpoch();
         }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

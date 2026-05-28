@@ -58,7 +58,7 @@ public class UserServiceTest {
 
             var response = userService.findById(USER_ID);
 
-            assertEquals(user.getId(), response.getId());
+            assertEquals(user.getUserId(), response.getUserId());
             assertEquals(user.getFirstName(), response.getFirstName());
             assertEquals(user.getLastName(), response.getLastName());
             assertEquals(user.getUsername(), response.getUsername());

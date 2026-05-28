@@ -20,7 +20,7 @@ public class AuthProducer {
 
     public void publishMessageEmail(User user) {
         EmailResponse response = new EmailResponse();
-        response.setUserId(user.getId());
+        response.setUserId(user.getUserId());
         response.setEmailTo(user.getEmail());
         response.setSubject("Cadastro realizado com sucesso!");
         response.setText(user.getFirstName() + ", seja bem vindo(a)! \nAgradecemos o seu cadastro, aproveite agora todos os recursos da nossa plataforma!");

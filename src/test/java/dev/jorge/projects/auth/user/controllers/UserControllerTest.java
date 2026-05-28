@@ -76,7 +76,7 @@ public class UserControllerTest {
             assertNotNull(response.getBody());
             assertNotNull(response.getBody().getContent());
 
-            assertEquals(user.getId(), response.getBody().getContent().id());
+            assertEquals(user.getUserId(), response.getBody().getContent().userId());
             assertEquals(user.getFirstName(), response.getBody().getContent().firstName());
             assertEquals(user.getLastName(), response.getBody().getContent().lastName());
             assertEquals(user.getUsername(), response.getBody().getContent().username());
