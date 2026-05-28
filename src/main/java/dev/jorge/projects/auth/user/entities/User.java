@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,7 +23,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     private UUID userId;
