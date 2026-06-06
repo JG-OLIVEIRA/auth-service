@@ -28,7 +28,7 @@ git clone https://github.com/JG-OLIVEIRA/auth-service.git
 ### Inicialização
 
 #### Usando Docker Compose
-Certifique-se de que possui os containers de PostgreSQL e RabbitMQ disponíveis ou utilize a configuração Docker para subir a infraestrutura necessária:
+Certifique-se de que possui os containers de MySQL e RabbitMQ disponíveis ou utilize a configuração Docker para subir a infraestrutura necessária:
 ```bash
 docker-compose up -d
 ```
@@ -49,8 +49,6 @@ Todos os endpoints da API pública utilizam o prefixo `/api/v1`.
 | :---   | :---                         | :---                                                             | :---:               | :---:          |
 | POST   | `/api/v1/auth/register`      | Cadastro de novo usuário e publicação de evento no RabbitMQ       | Não                 | -              |
 | POST   | `/api/v1/auth/login`         | Autenticação com e-mail e senha, retornando token JWT            | Não                 | -              |
-| GET    | `/api/v1/users`              | Listagem paginada de todos os usuários cadastrados               | Sim                 | `ROLE_ADMIN`   |
-| GET    | `/api/v1/users/{userId}`     | Detalhes de um usuário específico (suporta HATEOAS)              | Sim                 | `ROLE_ADMIN`   |
 
 ---
 
@@ -59,7 +57,6 @@ Todos os endpoints da API pública utilizam o prefixo `/api/v1`.
 - **✅ Autenticação baseada em JWT**: Geração de tokens JWT seguros para autenticação sem estado (stateless).
 - **✅ Controle de Acesso Baseado em Roles**: Restrição de acesso aos endpoints `/api/v1/users/**` exclusivamente para usuários com a role `ROLE_ADMIN`.
 - **✅ Integração Assíncrona com RabbitMQ**: Publicação automatizada de mensagens de boas-vindas na fila (`default.email`) após o cadastro com sucesso de um novo usuário.
-- **✅ HATEOAS**: Links de hipermídia dinâmicos e navegáveis incluídos nas respostas de consulta a usuários.
 - **✅ Paginação com Spring Data**: Consultas otimizadas na listagem de usuários com suporte a parâmetros de página e tamanho de página.
 - **✅ Migrations com Flyway**: Controle de histórico estruturado de banco de dados por meio de scripts SQL versionados.
 - **✅ Criptografia Argon2**: Armazenamento seguro de senhas através do algoritmo de criptografia Argon2.
@@ -73,16 +70,15 @@ Todos os endpoints da API pública utilizam o prefixo `/api/v1`.
 
 ## Core Backend
 - **Java 21**
-- **Spring Boot 3.3.1**
+- **Spring Boot 4.0.6**
 - **Spring Security** (Segurança e autorização)
 - **Spring Web** (Desenvolvimento de APIs RESTful)
-- **Spring HATEOAS** (Hipermídia na API)
 - **Spring Data JPA** (Camada de persistência e paginação)
 - **Spring AMQP (RabbitMQ)** (Mensageria e comunicação assíncrona)
 - **Spring Actuator** (Métricas e monitoramento de integridade)
 
 ## Banco de Dados & Utilitários
-- **PostgreSQL** (Banco de dados relacional robusto)
+- **MySQL** (Banco de dados relacional robusto e performático)
 - **Flyway** (Gerenciamento de migrações de banco de dados)
 - **Lombok** (Redução de boilerplate de código)
 - **Argon2** (Algoritmo avançado para hashing de senhas)
@@ -98,36 +94,40 @@ O projeto adota o padrão de organização **Package-by-Feature** para isolar as
 ```text
 src/main/java/dev/jorge/projects/auth
 ├── AuthServiceApplication.java
-├── common
-│   ├── dtos
-│   ├── enums
-│   └── handlers
-│       └── GlobalExceptionHandler.java (Tratamento centralizado de erros)
-├── security
-│   ├── configs
-│   │   ├── AuthConfig.java
-│   │   ├── JWTUserData.java
-│   │   ├── RabbitMQConfig.java (Configuração do Jackson Message Converter)
-│   │   ├── SecurityConfig.java (Configuração de rotas e filtros do Spring Security)
-│   │   ├── SecurityFilter.java (Filtro interceptor do JWT)
-│   │   └── TokenConfig.java (Configuração de geração e validação de JWT)
-│   ├── controllers
-│   │   └── AuthController.java (Rotas de login e cadastro)
-│   ├── dtos (Modelos de entrada e saída de autenticação)
-│   ├── producers
-│   │   └── AuthProducer.java (Produtor de mensagens do RabbitMQ)
-│   └── services (Lógica de autenticação e registro)
-└── user
-    ├── controllers
-    │   └── UserController.java (Rotas de administração de usuários com HATEOAS)
-    ├── dtos (Modelos de resposta de usuário)
-    ├── entities
-    │   └── User.java (Entidade JPA mapeada)
-    ├── enums
-    ├── exceptions
-    ├── repositories
-    │   └── UserRepository.java
-    └── services
+├── config
+│   ├── AuthConfig.java (Configuração de criptografia e beans de autenticação)
+│   ├── JWTUserData.java (Dados de usuário extraídos do token JWT)
+│   ├── RabbitMQConfig.java (Configuração de mensageria RabbitMQ e Jackson)
+│   ├── SecurityConfig.java (Filtros e regras de autorização do Spring Security)
+│   ├── SecurityFilter.java (Filtro de requisição para validação do JWT)
+│   └── TokenConfig.java (Configuração e geração/validação de tokens JWT)
+├── controller
+│   └── AuthController.java (Endpoints públicos de autenticação e registro)
+├── dto
+│   ├── request
+│   │   ├── LoginRequest.java (Payload para login)
+│   │   └── RegisterUserRequest.java (Payload para registro de usuário)
+│   └── response
+│       ├── EmailResponse.java (Dados de envio de e-mail/evento)
+│       ├── ExceptionResponse.java (Payload para erros de exceção)
+│       ├── LoginResponse.java (Payload contendo o token gerado)
+│       └── RegisterUserResponse.java (Payload contendo dados do usuário criado)
+├── enums
+│   ├── ExceptionDetails.java (Detalhes catalogados das exceções)
+│   └── Role.java (Perfis de usuário: ROLE_USER, ROLE_ADMIN)
+├── exception
+│   ├── UserAlreadyExistsException.java (Lançada ao registrar e-mail duplicado)
+│   └── UserNotFoundException.java (Lançada se credenciais não forem encontradas)
+├── handler
+│   └── GlobalExceptionHandler.java (Tratamento global e padronização de erros)
+├── model
+│   └── User.java (Entidade de banco de dados que implementa UserDetails e Serializable)
+├── producer
+│   └── AuthProducer.java (Produtor que publica eventos de boas-vindas no RabbitMQ)
+├── repository
+│   └── UserRepository.java (Interface JPA de acesso a dados da tb_users)
+└── service
+    └── AuthService.java (Serviço com lógica de registro, autenticação e geração de JWT)
 ```
 
 ---
@@ -161,10 +161,28 @@ Os parâmetros dinâmicos de infraestrutura e segredos confidenciais devem ser c
 * `AWS_ACCOUNT_ID`: ID numérico da conta AWS para montagem da URI do ECR e ARN da Role.
 * `INSTANCE_KEY`: Conteúdo da chave privada SSH (`.pem`) para acesso à instância EC2.
 * `ELASTIC_IP`: Endereço IP público estático associado à instância EC2.
-* `DATABASE_URL`: URI JDBC de conexão com o banco de dados PostgreSQL ativo na nuvem.
-* `DATABASE_USERNAME`: Nome do usuário administrador para acesso ao PostgreSQL.
-* `DATABASE_PASSWORD`: Senha secreta de acesso ao PostgreSQL.
+* `DATABASE_URL`: URI JDBC de conexão com o banco de dados MySQL ativo na nuvem.
+* `DATABASE_USERNAME`: Nome do usuário administrador para acesso ao MySQL.
+* `DATABASE_PASSWORD`: Senha secreta de acesso ao MySQL.
 * `RABBITMQ_URL`: String de conexão para o broker de mensageria RabbitMQ.
 
 ### GitHub Variables (Variáveis) ⚙️
 * `AWS_REGION`: Região da AWS que hospeda os recursos em nuvem (ex: `us-east-1`).
+
+---
+
+# 🔄 De-Para (Resumo de Mudanças do Projeto)
+
+Abaixo está o mapeamento detalhado ("De-Para") das alterações recentes realizadas no projeto, servindo como guia de referência rápida para a migração/evolução do ecossistema:
+
+| Componente / Aspecto | Estado Anterior (De) | Estado Atual (Para) | Racional / Detalhes |
+| :--- | :--- | :--- | :--- |
+| **Banco de Dados** | PostgreSQL | MySQL (imagem `mysql:9.7.0`) | Migração de infraestrutura de banco de dados. |
+| **Containers (Local)** | Docker Compose com PostgreSQL | Docker Compose configurado com MySQL e RabbitMQ | Facilidade para subir o ambiente local completo com `docker-compose up -d`. |
+| **Dependências DB** | `org.postgresql:postgresql` | `com.mysql:mysql-connector-j` e `org.flywaydb:flyway-mysql` | Atualização dos drivers e suporte às migrations do Flyway no MySQL. |
+| **Versão Spring Boot** | `3.3.1` | `4.0.6` | Atualização de segurança e recursos do ecossistema Spring. |
+| **Organização de Código** | Pacotes segregados por módulos aninhados (`common`, `security`, `user`) | Estrutura de pacotes plana e direta (`config`, `controller`, `dto`, etc.) sob o pacote raiz | Maior simplicidade de importações e facilidade de localização de classes. |
+| **Entidade de Usuário** | Atributo identificador chamado `userId` | Atributo identificador renomeado para `id` | Padronização e simplificação de nomenclatura no modelo de dados. |
+| **Serialização do Usuário** | Entidade `User` sem implementação Serializable | Entidade `User` implementa `Serializable` com `serialVersionUID = 1L` | Requisito do Spring Security para armazenamento e replicação de sessões do usuário. |
+| **HATEOAS** | Integrado às respostas do User (Spring HATEOAS) | Removido completamente da API | Simplificação das respostas JSON e eliminação de acoplamento com hipermídia. |
+| **Endpoints Removidos** | `GET /api/v1/users` e `GET /api/v1/users/{userId}` (Admin) | Apenas endpoints públicos `/api/v1/auth/register` e `/api/v1/auth/login` | Foco exclusivo do microserviço na autenticação e segurança. |
