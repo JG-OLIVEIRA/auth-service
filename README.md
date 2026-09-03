@@ -6,32 +6,20 @@ Microservice de autenticação e autorização para aplicações web e mobile, f
 
 ## Funcionalidades
 
-- Spring Framework
-- **Spring Boot**
-  - Automatic Run, Configurations and Dependencies
-  - Embedded Application Server
-- **Spring Web**
-  - Validation
-  - API RESTful
-- **Spring Data**
-  - **JPA**
-    - Pagination
-    - Repositories
-    - JPA Criteria Builder
-    - @Query
-    - Filters
-- Spring AMQP
-- **Spring Security**
-  - **Authentication**
-    - Basic Authentication
-    - Token Authentication
-      - JWT
-      - Encrypted Token
-      - Opaque Token
-      - Refresh Token
-  - **Authorization**
-    - Roles
-    - Permissions
+- Autenticação via usuário/senha e token
+- Emissão e renovação de tokens JWT
+- Suporte a tokens opacos e criptografados
+- Controle de acesso por papéis (roles) e permissões
+- Paginação e filtros dinâmicos de dados
+
+## Tecnologias
+
+- **Spring Framework** — Injeção de Dependências, Beans, Configurações
+- **Spring Boot** — Autoconfiguração, Starter POMs, Actuator
+- **Spring Web** — REST APIs, Controllers, Exception Handling
+- **Spring Data JPA** — Integração com bancos de dados relacionais, Repositórios, Consultas Dinâmicas
+- **Spring AMQP** — Integração com Message Brokers
+- **Spring Security** — Autenticação, Autorização, Configuração de Segurança
 
 ## Pré-requisitos
 
