@@ -1,8 +1,6 @@
 # Auth Service
 
-## Descrição
-
-Microservice de autenticação e autorização para aplicações web e mobile, fornecendo suporte a diferentes métodos de autenticação e gerenciamento de permissões.
+**Descrição:** Microservice de autenticação e autorização para aplicações web e mobile, fornecendo suporte a diferentes métodos de autenticação e gerenciamento de permissões.
 
 ## Funcionalidades
 
